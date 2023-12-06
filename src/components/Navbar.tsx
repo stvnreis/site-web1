@@ -1,41 +1,75 @@
 'use client'
 
-import Link from "next/link"
-import { ShoppingBasket } from "lucide-react"
-import { Button } from "@nextui-org/react"
-import { getCookie, setCookie } from "cookies-next"
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { isLoggedIn, signOut } from "../app/activeUser"
+import React from "react";
+import {Navbar as NextUiNavbar, NavbarBrand, NavbarContent, NavbarItem, Link, Button, NavbarMenu, NavbarMenuItem, NavbarMenuToggle} from "@nextui-org/react";
+import { ShoppingBag } from "lucide-react";
 
 export const Navbar = () => {
-  const router = useRouter()
+  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
-  const handleLogin = () => {
-    if (isLoggedIn()) signOut()
+  const menuItems = [
+    { name: "Produtos", url: "/produtos"},
+    { name: "Produtos em Promocao", url: "/produtos/promocoes"},
+    { name: "Produtos por Categoria", url: "/produtos/categorias"},
+    { name: "Vendas", url: "/vendas"},
+    { name: "Sair", url: "/auth"},
+  ];
 
-    router.push('auth')
-    router.refresh()
-  }
+  return (<NextUiNavbar onMenuOpenChange={setIsMenuOpen} className="bg-primary opacity-80 mb-10">
+      <NavbarContent>
+        <NavbarMenuToggle
+          aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+          className="sm:hidden"
+        />
+      <NavbarBrand>
+        <Link href="/">
+            <p className="font-bold text-inherit text-white">єcσмм cαƒє</p>
+        </Link>
+        </NavbarBrand>
+      </NavbarContent>
 
-  return <div className="my-5 mx-5 p-5 flex items-center justify-between bg-primary text-zinc-300 rounded-full opacity-80">
-    <div className="flex">єcσмм cαƒє</div>
-    <div className="flex items-center justify-center gap-5 font-bold">
-      <Link href='/produtos' className="hover:text-zinc-700 hover:opacity-80">
-        Produtos
-      </Link>
-      <Link href='/menu' className="hover:text-zinc-700 hover:opacity-80">
-        Cardápio
-      </Link>
-      <Link href='/vendas' className="hover:text-zinc-700 hover:opacity-80">
-        Vendas
-      </Link>
-    </div>
-    <div className="flex justify-end items-center gap-10">
-      <Link href='/cart'>
-        <ShoppingBasket size={30} className="rounded-full hover:bg-zinc-700 hover:opacity-80" />
-      </Link>
-      <Button onClick={() => handleLogin()}>{!isLoggedIn() ? 'Fazer Login' : 'Sair'}</Button>
-    </div>
-  </div>
+      <NavbarContent className="hidden sm:flex gap-4" justify="center">
+        <NavbarItem isActive>
+          <Link className="text-white" href="/produtos/promocoes" aria-current="page">
+            Produtos em Promoção
+          </Link>
+        </NavbarItem>
+        <NavbarItem>
+          <Link className="text-white" href="/produtos/categorias">
+            Produtos por Categoria
+          </Link>
+        </NavbarItem>
+        <NavbarItem>
+          <Link className="text-white" href="/vendas">
+            Vendas
+          </Link>
+        </NavbarItem>
+      </NavbarContent>
+      <NavbarContent justify="end">
+      <NavbarItem>
+          <Link className="text-white" href="/cart">
+            <ShoppingBag size={35} className="rounded-lg p-1 hover:bg-zinc-500"/>
+          </Link>
+        </NavbarItem>
+        <NavbarItem>
+          <Button as={Link} className="text-white" href="/auth" variant="flat">
+            Login
+          </Button>
+        </NavbarItem>
+      </NavbarContent>
+      <NavbarMenu className="bg-primary opacity-80">
+        {menuItems.map((item, index) => (
+          <NavbarMenuItem key={`${item}-${index}`}>
+            <Link
+              className={`w-full ${item.name === 'Sair' ? 'text-danger': 'text-white'}`}
+              href={item.url}
+              size="lg"
+            >
+              {item.name}
+            </Link>
+          </NavbarMenuItem>
+        ))}
+      </NavbarMenu>
+    </NextUiNavbar>
+  );
 }

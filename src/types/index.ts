@@ -11,7 +11,8 @@ export type TProduto = {
   descricao: string;
   valor: number;
   quantidade: number;
-  idFornecedor: number
+  idFornecedor: number;
+  categoria: string;
 }
 
 export type TVenda = {

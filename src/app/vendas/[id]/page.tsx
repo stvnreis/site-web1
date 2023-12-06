@@ -30,6 +30,7 @@ export default function VendaPage({ params: { id } }: { params: { id: number } }
     <div className="flex flex-col justify-start gap-5">
       <h1 className="text-xl font-bold">Código da venda: {data?.data.id ?? ''}</h1>
       <span>Vendedor: {data?.data && data.data.funcionario ? data?.data.funcionario.nome : ''}</span>
+      <span>Seu pedido está a caminho</span>
       <span className="text-lg font-semibold">Valor total da venda: <strong className="text-success">{brlMoney(data?.data.valorTotal ?? 0)}</strong></span>
     </div>
     <ProdutosGrid items={data?.data.items ?? []} />

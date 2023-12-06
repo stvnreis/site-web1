@@ -90,7 +90,7 @@ export const LoginCard = () => {
         onChange={(e) => handleFormEdit(e, 'password')}
         type={isVisible ? "text" : "password"}
       />
-      <Button radius="none" onClick={(e) => handleForm(e)} isLoading={isLoading} >
+      <Button radius="none" onClick={(e) => handleForm(e)} isLoading={isLoading} className="bg-gradient-to-br from-white via-[#946E48] to-[#000000]" >
         Entrar
       </Button>
     </CardBody>

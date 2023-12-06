@@ -8,6 +8,8 @@ import { brlMoney } from "@/helpers/money/brlMoney"
 import { ComentarioWrapper } from "@/components/comentarios/ComentarioWrapper"
 import { useState } from "react"
 import { getPassword, getUser } from "../../activeUser"
+import { addItemToCart } from "../../activeCart"
+import { useSnackbar } from "notistack"
 
 const coments: TComentario[] = [
   {
@@ -15,48 +17,28 @@ const coments: TComentario[] = [
       nome: 'Steven',
       fotoUrl: 'aaaa.com.br'
     },
-    comentario: 'Um ótimo produto para se adiquirir'
+    comentario: 'Delicioso'
   },
   {
     pessoa: {
-      nome: 'Steven',
+      nome: 'Ana Laura',
       fotoUrl: 'aaaa.com.br'
     },
-    comentario: 'Um ótimo produto para se adiquirir'
+    comentario: 'Ótimo para começar o dia'
   },
   {
     pessoa: {
-      nome: 'Steven',
+      nome: 'João Victor',
       fotoUrl: 'aaaa.com.br'
     },
-    comentario: 'Um ótimo produto para se adiquirir'
+    comentario: 'Simplesmente perfeito, além de ter uma entrega super rápida.'
   },
-  {
-    pessoa: {
-      nome: 'Steven',
-      fotoUrl: 'aaaa.com.br'
-    },
-    comentario: 'Um ótimo produto para se adiquirir'
-  },
-  {
-    pessoa: {
-      nome: 'Steven',
-      fotoUrl: 'aaaa.com.br'
-    },
-    comentario: 'Um ótimo produto para se adiquirir'
-  },
-  {
-    pessoa: {
-      nome: 'Steven',
-      fotoUrl: 'aaaa.com.br'
-    },
-    comentario: 'Um ótimo produto para se adiquirir'
-  }
 ]
 
 export default function ProdutoPage({ params: { id } }: { params: { id: number } }) {
   const [comentarios, setComentarios] = useState(coments)
   const [errorMessage, setErrorMessage] = useState('')
+  const {enqueueSnackbar} = useSnackbar()
   const {isOpen, onOpen, onClose} = useDisclosure()
 
   const { data, isLoading, isError } = useQuery({
@@ -84,6 +66,15 @@ export default function ProdutoPage({ params: { id } }: { params: { id: number }
     onClose()
   }
 
+  const handleCarrinho = (produto: TProduto) => {
+    addItemToCart(produto)
+
+    enqueueSnackbar(`${produto.descricao} adicionado ao carrinho`, {
+      variant: 'success',
+      autoHideDuration: 2000,
+    })
+  }
+
   if (isLoading) return <div>carregando</div>
   
   if (isError) return <div>{errorMessage}</div>
@@ -106,7 +97,7 @@ export default function ProdutoPage({ params: { id } }: { params: { id: number }
         <Card className="w-52 h-52 md:w-60 md:h-80" shadow="lg">
           <CardBody className="flex flex-col items-center justify-between">
             <span className="font-bold text-xs md:text-sm">Quantidade em Estoque: {data?.quantidade}</span>
-            <Button>Adicionar ao carrinho</Button>
+            <Button onClick={() => handleCarrinho(data!)}>Adicionar ao carrinho</Button>
           </CardBody>
         </Card>
       </div>

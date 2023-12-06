@@ -5,6 +5,7 @@ import { NextUiProvider } from '../components/providers/NextUiProvider'
 import { Navbar } from '../components/Navbar'
 import TanstackProvider from '../components/providers/TanstackProvider'
 import { SnackBarProvider } from '../components/providers/SnackBarProvider'
+import { Footer } from '../components/Footer'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -26,6 +27,7 @@ export default function RootLayout({
             <SnackBarProvider>
               <Navbar />
               {children}
+              <Footer />
             </SnackBarProvider>
           </NextUiProvider>
         </TanstackProvider>

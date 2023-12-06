@@ -1,4 +1,4 @@
-import { Produto } from "../menu/components/ProdutoCard";
+import { Produto } from "../produtos/components/ProdutoCard";
 import Image from "next/image";
 import { TProduto } from "../../types";
 
