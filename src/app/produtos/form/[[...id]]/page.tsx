@@ -1,17 +1,15 @@
 'use client'
 
-import { TProduto, TProdutoPostRequest, TProdutosForm } from "@/types";
+import { TProduto, TProdutosForm } from "@/types";
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
-import { getCookie } from "cookies-next";
 import { ProdutosForm } from "./components/ProdutosForm";
-import { useRouter } from "next/navigation";
 import { ChangeEvent, useState } from "react";
 import { useSnackbar } from "notistack";
+import { Api } from "@/app/lib/axios";
+import router from "next/router";
+import { getPassword, getUser } from "@/app/activeUser";
 
-export default function ProdutoFormPage({ params: { id } }: TProdutosForm) {
-  const router = useRouter()
-  
+export default function ProdutoFormPage({ params: { id } }: TProdutosForm) { 
   const [produto, setProduto] = useState<TProduto>()
   const [isFetching, setIsFetching] = useState(false)
 
@@ -30,11 +28,11 @@ export default function ProdutoFormPage({ params: { id } }: TProdutosForm) {
     queryKey: ['fetchProdutos'],
     enabled: hasId,
     queryFn: async () => {
-      const { data } = await axios.get(`http://localhost:3333/api/produtos/${id}`, {
+      const { data } = await Api.get(`api/produtos/${id}`, {
         headers: {
           "Content-Type": "Application/json",
-          user: getCookie('user'),
-          password: getCookie('password'),
+          user: getUser(),
+          password: getPassword(),
         },
       })
 
@@ -43,34 +41,38 @@ export default function ProdutoFormPage({ params: { id } }: TProdutosForm) {
   })
 
   const handleSubmit = async (values: TProduto) => {
-    if (!hasId) {
-      try {
-        setIsFetching(!isFetching)
-        const {data} = await axios.post(`http://localhost:3333/api/produtos`, {
-          descricao: values.descricao,
-          valor: Number(values.valor),
-          idFornecedor: Number(values.idFornecedor),
-          quantidade: Number(values.quantidade)
-        },
-        {
-          headers: {
-            "Content-Type": "Application/json",
-            user: getCookie('user'),
-            password: getCookie('password'),
-          },
-        })
-        console.log(data)
-
-        router.push(`/produtos/form/${data.data.id}`)
-
-        enqueueSnackbar(data.message, {variant: 'success'})
-      } catch (error) {
-        enqueueSnackbar('Erro ao cadastrar prato', {variant: 'error'})
-      } finally {
-        setIsFetching(!isFetching)
-      }
-      
+    const body = {
+      descricao: values.descricao,
+      valor: Number(values.valor),
+      idFornecedor: Number(values.idFornecedor),
+      quantidade: Number(values.quantidade)
     }
+
+    const header = {
+      headers: {
+        "Content-Type": "Application/json",
+        user: getUser(),
+        password: getPassword(),
+      },
+    }
+
+    try {
+      setIsFetching(true)
+      const { data } =
+        hasId ?
+          await Api.patch(`api/produtos/${values.id}`, body, header) : await Api.post(`api/produtos`, body, header)
+      
+      console.log(data)
+
+      hasId ? router.reload() : router.push(`/produtos/form/${data.data.id}`)
+
+      enqueueSnackbar(data.message, {variant: 'success'})
+    } catch (error) {
+      enqueueSnackbar('Erro ao cadastrar prato', {variant: 'error'})
+    } finally {
+      setIsFetching(false)
+    }
+      
   }
 
   return <ProdutosForm

@@ -13,13 +13,14 @@ const columns = [
 export type TabelaProdutosProps = {
   produtos?: TProduto[]
   isLoading: boolean
+  isPending?: boolean
   errorMessage: string
   loadingMessage?: string
   handleRouting: (id?: number) => void
   onDelete: (id: number) => void
 }
 
-export const TabelaProdutos = ({ produtos, isLoading, loadingMessage, errorMessage, handleRouting, onDelete }: TabelaProdutosProps) => {
+export const TabelaProdutos = ({ produtos, isLoading, isPending, loadingMessage, errorMessage, handleRouting, onDelete }: TabelaProdutosProps) => {
   const renderCell = React.useCallback((produto: TProduto, columnKey: React.Key) => {
     const cellValue = produto[columnKey as keyof TProduto];
 
@@ -64,7 +65,7 @@ export const TabelaProdutos = ({ produtos, isLoading, loadingMessage, errorMessa
       default:
         return cellValue;
     }
-  }, []);
+  }, [handleRouting, onDelete]);
 
   return <Table
     classNames={{
@@ -87,7 +88,7 @@ export const TabelaProdutos = ({ produtos, isLoading, loadingMessage, errorMessa
     </TableHeader>
     <TableBody
       items={produtos ?? []}
-      isLoading={isLoading}
+      isLoading={isLoading || isPending}
       emptyContent={errorMessage}
       loadingContent={<Spinner label={loadingMessage ?? 'Carregando...'} color="primary" />}
     >

@@ -16,6 +16,11 @@ export const addItemToCart = (produto: TProduto, quantidade?: number): void => {
   else cartItems.push({produto, quantidade: quantidade ?? 1})
 }
 
+export const setCartItems = (items: cartItemsProps[]) => {
+  clearCart()
+  cartItems = [...items]
+}
+
 export const clearCart = (): void => {
   cartItems = []
 }

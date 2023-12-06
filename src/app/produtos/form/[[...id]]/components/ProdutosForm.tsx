@@ -6,13 +6,12 @@ import { useForm } from "react-hook-form"
 import Image from "next/image"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { ProdutoFormSchema } from "@/lib/validations/ProdutosForm"
-import { number, z } from "zod"
+import { z } from "zod"
 
 export const ProdutosForm = ({
   id,
   data,
   isFetching,
-  isPending,
   onSubmit,
   onEdit,
 }: TForm<TProduto>) => {
@@ -28,19 +27,18 @@ export const ProdutosForm = ({
 
   useEffect(() => reset(data), [data])
 
-  return <form
-    className="mt-10 px-10 flex flex-col justify-center items-center gap-10 w-full"
-    onSubmit={handleSubmit(onSubmit)}
+  return <div
+    className="bg-primary opacity-80 mt-10 mx-5 p-10 rounded-lg flex flex-col gap-10"
+    // onSubmit={handleSubmit(onSubmit)}
   >
-    <div className="flex gap-5">
-      <div className="w-60 h-40 relative">
+    <div className="flex gap-5 justify-around">
         <Image
-          src={id && data?.fotoUrl ? data?.fotoUrl : ''}
+          src={data?.id && data?.fotoUrl ? data.fotoUrl : ''}
           alt="imagem produto"
-          fill
-          style={{ objectFit: 'cover', borderRadius: '10px' }}
+          width={500}
+          height={500}
+          className="rounded-lg"
         />
-      </div>
       <div className="flex flex-col gap-10">
         <div className="flex gap-4">
           <Input
@@ -48,34 +46,39 @@ export const ProdutosForm = ({
             isDisabled
             label="Código"
             variant="faded"
-            color="danger"
             readOnly
             value={data && data.id ? data?.id.toString() : ''}
             size="lg"
+            classNames={{
+              inputWrapper: 'border-white text-white'
+            }}
           />
           <Input
             isDisabled={isFetching}
             label="Descrição"
             variant="faded"
-            color="danger"
+            color="default"
             value={data?.descricao}
             onChange={(e) => onEdit(e, 'descricao')}
             size="lg"
             isRequired
+            classNames={{
+              inputWrapper: 'border-white text-white'
+            }}
           />
           <Input
             isDisabled={isFetching}
             label="Quantidade em Estoque"
             variant="faded"
-            color="danger"
+            color="default"
             type="number"
-            classNames={{
-              inputWrapper: ''
-            }}
             value={data?.quantidade ? data.quantidade.toString() : ''}
             onChange={(e) => onEdit(e, 'quantidade')}
             size="lg"
             isRequired
+            classNames={{
+              inputWrapper: 'border-white text-white'
+            }}
           />
         </div>
         <div className="flex gap-4">
@@ -83,19 +86,22 @@ export const ProdutosForm = ({
             isDisabled={isFetching}
             label="Url da Imagem"
             variant="faded"
-            color="danger"
-            value={data?.fotoUrl}
+            color="default"
+            value={data?.fotoUrl ?? ''}
             onChange={(e) => onEdit(e, 'fotoUrl')}
             size="lg"
             isRequired
+            classNames={{
+              inputWrapper: 'border-white text-white'
+            }}
           />
           <Input
             isDisabled={isFetching}
             label="Valor Unitário"
             variant="faded"
-            color="danger"
+            color="default"
             classNames={{
-              inputWrapper: ''
+              inputWrapper: 'border-white text-white'
             }}
             value={data?.valor ? data.valor.toString() : ''}
             onChange={(e) => onEdit(e, 'valor')}
@@ -107,9 +113,9 @@ export const ProdutosForm = ({
             isDisabled={isFetching}
             label="Código do Fornecedor"
             variant="faded"
-            color="danger"
+            color="default"
             classNames={{
-              inputWrapper: ''
+              inputWrapper: 'border-white text-white'
             }}
             value={data && data.idFornecedor ? data?.idFornecedor.toString() : ''}
             onChange={(e) => onEdit(e, 'idFornecedor')}
@@ -120,16 +126,15 @@ export const ProdutosForm = ({
       </div>
       
     </div>
-    <div className="flex justify-end">
+    <div className="w-full flex justify-end">
       <Button
-        type="submit"
-        color="danger"
-        radius="none"
+        color="default"
+        radius="md"
         onClick={() => onSubmit(data!)}
         isLoading={isFetching}
       >
         Salvar
       </Button>
     </div>
-  </form>
+  </div>
 }

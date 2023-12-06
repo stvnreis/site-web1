@@ -1,18 +1,19 @@
-import { Button, Card, CardBody, CardFooter } from "@nextui-org/react"
+import { Button, Card, CardBody, CardHeader } from "@nextui-org/react"
 import Image from "next/image"
-import { TProduto } from "../types";
-import { addItemToCart, cartItems } from "../app/activeCart";
+import { TProduto } from "@/types";
+import { brlMoney } from "@/helpers/money/brlMoney";
+import Link from "next/link";
 
 type ProdutoCardProps = {
   item: TProduto
-  handleClick: (produto: TProduto) => void
+  handleClick: (e: any, produto: TProduto) => void
 }
 
 export const ProdutoCard = ({ item, handleClick }: ProdutoCardProps) => {
-  return <Card className="w-[20rem]">
-    <CardBody>
-      <div className="flex w-full">
-        <div className="w-1/2 relative">
+  return <Link href={`/produtos/${item.id}`}>
+  <Card isHoverable shadow="lg" className="h-[20rem] w-[15rem]">
+    <CardHeader className="w-full h-1/2">
+       <div className="w-full h-full relative">
           <Image
             src={item.fotoUrl ?? ''}
             alt={`Imagem de ${item.descricao}`}
@@ -20,20 +21,22 @@ export const ProdutoCard = ({ item, handleClick }: ProdutoCardProps) => {
             style={{ objectFit: 'cover', borderRadius: '10px' }}
           />
         </div>
+    </CardHeader>
+    <CardBody>
         <div className="flex flex-col justify-center items-center w-full h-full">
           <label>{item.descricao}</label>
-          <span className="text-sm">R${item.valor}/un</span>
+          <span className="text-sm">{brlMoney(item.valor)}/un</span>
           <Button
             variant='shadow'
-            color="primary"
+            color="default"
             radius="sm"
             size="sm"
             className="text-black mt-3"
-            onClick={() => handleClick(item)}>
+            onClick={(e) => handleClick(e, item)}>
             Adicionar ao carrinho
           </Button>
         </div>
-      </div>
     </CardBody>
-  </Card>
+    </Card>
+  </Link> 
 }

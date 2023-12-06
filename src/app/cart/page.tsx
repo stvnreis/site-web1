@@ -1,33 +1,38 @@
 'use client'
 
-import axios from "axios";
-import { cartItems, cartItemsProps, clearCart } from "../activeCart";
+import { cartItems, cartItemsProps, clearCart, setCartItems } from "../activeCart";
 import { getCookie } from "cookies-next";
 import { CartContainer } from "./components/CartContainer";
-import { TApiResponse, TVendaProdutoPostRequest } from "@/types";
+import { TVendaProdutoPostRequest } from "@/types";
 import { useState } from "react";
 import { useSnackbar } from "notistack";
-import { validaLogin } from "../validaLogin";
+import { Api } from "../lib/axios";
+import { getPassword, getUser } from "../activeUser";
 
-export default function CartPage() {
-  validaLogin()
-  
+export default function CartPage() {  
   const [cart, setCart] = useState(cartItems)
   const { enqueueSnackbar } = useSnackbar()
   const [isLoading, setIsLoading] = useState(false)
 
+  const removeItemFromCart = (idProduto: number) => {
+    const items = cart.filter((item) => item.produto.id !== idProduto)
+    setCart([...items])
+
+    setCartItems(items)
+  }
+
   const handleSell = async () => {
     try {
-      setIsLoading(!isLoading)
+      setIsLoading(true)
 
-      const {data} = await axios.post('http://localhost:3333/api/vendas', {
+      const {data} = await Api.post('api/vendas', {
         idFuncionario: Number(getCookie('idFuncionario')),
         produtos: toPostRequest(cartItems),
       },
         {
           headers: {
-            user: getCookie('user') as string,
-            password: getCookie('password') as string
+            user: getUser(),
+            password: getPassword(),
           }
         }
       )
@@ -38,21 +43,23 @@ export default function CartPage() {
       })
 
       clearCart(); setCart(cartItems)
-    } catch (err) {
-      enqueueSnackbar(err as string, {
+    } catch (err: any) {
+      console.log(err.response.data.message)
+      enqueueSnackbar(err.response.data.message as string, {
         variant: 'error',
         autoHideDuration: 1500
       })
     } finally {
-      setIsLoading(!isLoading)
+      setIsLoading(false)
     }
   }
 
-  return <div className="mt-10 flex flex-col w-full h-[30rem] justify-center items-center">
+  return <div>
     <CartContainer
       items={cart}
       handleSubmit={handleSell}
       isLoading={isLoading}
+      onRemove={removeItemFromCart}
     />
   </div>
 }

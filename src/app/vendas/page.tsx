@@ -1,38 +1,42 @@
 'use client'
 
 import { useQuery } from "@tanstack/react-query"
-import axios from "axios"
+
 import { TApiResponse, TVenda } from "@/types"
-import { getCookie } from "cookies-next"
 import { TabelaVendas } from "./components/TabelaVendas"
 import { useRouter } from "next/navigation"
-import { validaLogin } from "../validaLogin"
+import { Api } from "../lib/axios"
+import { getPassword, getUser } from "../activeUser"
+import { useState } from "react"
 
 export default function VendasPage() {
-  validaLogin()
   const router = useRouter()
+  const [errorMessage, setErrorMessage] = useState('')
 
   const handleRouting = (id: number) => {
     router.push(`/vendas/${id}`)
   }
 
   const {data, isLoading, isError} = useQuery({
-    queryKey: ['fetchProdutosFromMenu'],
+    queryKey: ['fetchVendaFromMenu'],
     retry: 0,
     queryFn: async () => {
-      const { data } = await axios.get('http://localhost:3333/api/vendas', {
-        headers: {
-          "Content-Type": "Application/json",
-          user: getCookie('user') as string,
-          password: getCookie('password') as string,
-        }
-      })
+      try {
+        const { data } = await Api.get('api/vendas', {
+          headers: {
+            "Content-Type": "Application/json",
+            user: getUser(),
+            password: getPassword(),
+          }
+        })
 
-      return data as TApiResponse<TVenda[]>
+        return data as TApiResponse<TVenda[]>
+      } catch (err: any) {
+        setErrorMessage(err.response.data.message)
+      }
+      
     }
   })
-
-  console.log(data)
   
   return <div>
     <TabelaVendas
@@ -40,6 +44,6 @@ export default function VendasPage() {
       handleRouting={handleRouting}
       loadingMessage="Carregando Vendas..."
       isLoading={isLoading}
-      errorMessage={isError ? data?.message ?? 'Erro ao buscar vendas!' : ''} />
+      errorMessage={errorMessage} />
   </div>
 }

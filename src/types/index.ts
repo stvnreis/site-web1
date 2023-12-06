@@ -24,6 +24,31 @@ export type TVenda = {
   };
 }
 
+export type TVendaToFindOne = {
+  id: number;
+  valorTotal: number;
+  venHorario: Date;
+  funcionario: {
+    id: number;
+    nome: string;
+  };
+  items: {
+    idItemVenda: number;
+    idProduto: number;
+    descricao: string;
+    quantidade: number;
+    valorUnitario: number;
+  }[]
+}
+
+export type TComentario = {
+  pessoa: {
+    nome: string;
+    fotoUrl: string;
+  }
+  comentario: string;
+}
+
 export type TProdutoPostRequest = {
   fotoUrl: string;
   descricao: string;
@@ -52,7 +77,6 @@ export type TForm<T> = {
   data?: T
   isFetching: boolean 
   isPending: boolean 
-  isSendingRequest: boolean
-  onSubmit: (values: T) => void
-  onEdit: (event: ChangeEvent, name: string) => void
+  onSubmit: (values: any) => void
+  onEdit: (event: ChangeEvent<HTMLInputElement>, name: string) => void
 }

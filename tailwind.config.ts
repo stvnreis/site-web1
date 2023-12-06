@@ -21,18 +21,36 @@ const config: Config = {
         nextui({
       prefix: "nextui", // prefix for themes variables
       addCommonColors: false, // override common colors (e.g. "blue", "green", "pink").
-      defaultTheme: "dark", // default theme from the themes object
-      defaultExtendTheme: "dark", // default theme to extend on custom themes
+      defaultTheme: "light", // default theme from the themes object
+      defaultExtendTheme: "light", // default theme to extend on custom themes
       layout: {}, // common layout tokens (applied to all themes)
       themes: {
+        // light: {
+        //   layout: {}, // light theme layout tokens
+        //   colors: {}, // light theme colors
+        // },
+        // dark: {
+        //   layout: {}, // dark theme layout tokens
+        //   colors: {}, // dark theme colors
+        // },
         light: {
-          layout: {}, // light theme layout tokens
-          colors: {}, // light theme colors
+          colors: {
+            primary: "#000000",
+            secondary: "#EE457E",
+            default: "#946E48",
+            // background:"#F4E8D1"
+            background: "#946E48"
+          }
         },
         dark: {
-          layout: {}, // dark theme layout tokens
-          colors: {}, // dark theme colors
+          colors: {
+            primary: "#FFD34E",
+            secondary: "#EE457E",
+            background: "#E1CA9E"
+          }
         },
+
+
         // ... custom themes
       },
     }),
